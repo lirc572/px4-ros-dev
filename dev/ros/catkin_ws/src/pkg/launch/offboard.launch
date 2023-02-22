@@ -6,7 +6,7 @@
 
 	<include file="$(find mavros)/launch/px4.launch">
         <!-- <arg name="fcu_url" default="/dev/ttyUSB0:921600" /> -->
-        <arg name="fcu_url" default="udp://ros:14540@px4:14557" />
+        <arg name="fcu_url" default="udp://ros:14540@px4:14580" />
 	</include>
 
 	<!-- Our node to control the drone -->

@@ -1,77 +1,55 @@
 #! /usr/bin/env python
 
 """
-Code is from https://docs.px4.io/main/en/ros/mavros_offboard_python.html
+Code is adapted from https://docs.px4.io/main/en/ros/mavros_offboard_python.html
 """
 
 import rospy
-from geometry_msgs.msg import PoseStamped
+
 from mavros_msgs.msg import State
-from mavros_msgs.srv import CommandBool, CommandBoolRequest, SetMode, SetModeRequest
+from sensor_msgs.msg import Imu
+from geometry_msgs.msg import PoseStamped, TwistStamped
 
 current_state = State()
-
 def state_cb(msg):
     global current_state
     current_state = msg
 
+current_imu_data = Imu()
+def imu_data_cb(msg):
+    global current_imu_data
+    current_imu_data = msg
+
+current_local_position_pose = PoseStamped()
+def local_position_pose_cb(msg):
+    global current_local_position_pose
+    current_local_position_pose = msg
+
+current_local_position_velocity = TwistStamped()
+def local_position_velocity_cb(msg):
+    global current_local_position_velocity
+    current_local_position_velocity = msg
 
 if __name__ == "__main__":
-    rospy.init_node("offb_node_py")
+    rospy.init_node("my_node")
 
     state_sub = rospy.Subscriber("mavros/state", State, callback = state_cb)
 
-    local_pos_pub = rospy.Publisher("mavros/setpoint_position/local", PoseStamped, queue_size=10)
-    
-    rospy.wait_for_service("/mavros/cmd/arming")
-    arming_client = rospy.ServiceProxy("mavros/cmd/arming", CommandBool)    
-
-    rospy.wait_for_service("/mavros/set_mode")
-    set_mode_client = rospy.ServiceProxy("mavros/set_mode", SetMode)
-    
+    # subscribe to the topics that we need
+    imu_data_sub = rospy.Subscriber("mavros/imu/data", Imu, callback = imu_data_cb)
+    local_position_pose_sub = rospy.Subscriber("mavros/local_position/pose", PoseStamped, callback = local_position_pose_cb)
+    local_position_velocity_sub = rospy.Subscriber("mavros/local_position/velocity_local", TwistStamped, callback = local_position_velocity_cb)
 
     # Setpoint publishing MUST be faster than 2Hz
     rate = rospy.Rate(20)
 
     # Wait for Flight Controller connection
     while(not rospy.is_shutdown() and not current_state.connected):
+        print('Connecting to PX4...')
         rate.sleep()
+    print('Connected!')
 
-    pose = PoseStamped()
-
-    pose.pose.position.x = 0
-    pose.pose.position.y = 0
-    pose.pose.position.z = 2
-
-    # Send a few setpoints before starting
-    for i in range(100):   
-        if(rospy.is_shutdown()):
-            break
-
-        local_pos_pub.publish(pose)
-        rate.sleep()
-
-    offb_set_mode = SetModeRequest()
-    offb_set_mode.custom_mode = 'OFFBOARD'
-
-    arm_cmd = CommandBoolRequest()
-    arm_cmd.value = True
-
-    last_req = rospy.Time.now()
-
+    rate = rospy.Rate(1)
     while(not rospy.is_shutdown()):
-        if(current_state.mode != "OFFBOARD" and (rospy.Time.now() - last_req) > rospy.Duration(5.0)):
-            if(set_mode_client.call(offb_set_mode).mode_sent == True):
-                rospy.loginfo("OFFBOARD enabled")
-            
-            last_req = rospy.Time.now()
-        else:
-            if(not current_state.armed and (rospy.Time.now() - last_req) > rospy.Duration(5.0)):
-                if(arming_client.call(arm_cmd).success == True):
-                    rospy.loginfo("Vehicle armed")
-            
-                last_req = rospy.Time.now()
-
-        local_pos_pub.publish(pose)
-
+        print('Running...')
         rate.sleep()

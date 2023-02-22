@@ -12,8 +12,7 @@ docker compose -f docker/docker-compose.yml up --build
 
 # In a new terminal
 docker exec -it px4-ros-dev-px4-1 bash
-export DISPLAY=:0
-make px4_sitl gazebo # or make px4_sitl_default gazebo
+DISPLAY=:0 make px4_sitl gazebo # or make px4_sitl_default gazebo
 # Use a VNC client to connect to the VNC server at 127.0.0.1:5900, the password is `password`
 
 # In a new terminal
@@ -96,6 +95,7 @@ If you encounter `UAS: GeographicLib exception` while running the ROS package, i
 
 - [ROS1 Tutorials](https://wiki.ros.org/ROS/Tutorials)
 - [PX4 Docs on MAVROS](https://docs.px4.io/main/en/ros/mavros_offboard_python.html)
+- [PX4 Docs on SITL Simulation Environment](https://docs.px4.io/main/en/simulation/#sitl-simulation-environment)
 - [PX4 Docs on Docker Containers](https://docs.px4.io/main/en/test_and_ci/docker.html)
 - [Docker VNC Server](https://qxf2.com/blog/view-docker-container-display-using-vnc-viewer/)
 - [JetPack Archive](https://developer.nvidia.com/embedded/jetpack-archive)
