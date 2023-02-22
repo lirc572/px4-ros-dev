@@ -3,6 +3,7 @@ FROM osrf/ros:melodic-desktop-full
 WORKDIR /root
 
 RUN apt-get update && apt-get install -y \
+    curl \
     ros-melodic-mavros \
     ros-melodic-mavros-extras \
     && rm -rf /var/lib/apt/lists/*

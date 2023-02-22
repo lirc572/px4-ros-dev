@@ -1,4 +1,5 @@
 version: "3.9"
+name: px4-ros-jetson
 services:
     inference-server:
         build:

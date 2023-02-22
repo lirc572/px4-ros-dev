@@ -1,6 +1,6 @@
 # px4-docker-dev
 
-This repository provides a Docker based development environment for PX4 and ROS. It also provides a Nvidia Jetson based environment for testing on an actual companion computer.
+This repository provides a Docker based development environment for PX4 and ROS. It also provides a NVIDIA Jetson based environment for testing on an actual companion computer.
 
 ## Development Environment
 
@@ -8,23 +8,23 @@ This repository provides a Docker based development environment for PX4 and ROS.
 
 ```bash
 cd dev
-docker-compose -f docker/docker-compose.yml up --build
+docker compose -f docker/docker-compose.yml up --build
 
 # In a new terminal
-docker exec -it docker-px4-1 bash
-make px4_sitl gazebo # or make px4_sitl_default gazebo
-
-# Note that if you want to run the Gazebo GUI, you need to run a X server on the host machine, and set the environment variable `DISPLAY` to the IP address of your host machine within the container. We recommend using MobaXterm on Windows, which has a built-in X server. You can find the IP address by hovering over the X server icon on the top right corner of the MobaXterm GUI. Then run the following command in the container before running `make px4_sitl gazebo`:
-export DISPLAY=YOUR_IP:0.0
+docker exec -it px4-ros-dev-px4-1 bash
+DISPLAY=:0 make px4_sitl gazebo # or make px4_sitl_default gazebo
+# Use a VNC client to connect to the VNC server at 127.0.0.1:5900, the password is `password`
 
 # In a new terminal
-docker exec -it docker-ros-1 bash
+docker exec -it px4-ros-dev-ros-1 bash
 cd catkin_ws
 source devel/setup.bash
 roslaunch package_name launch_file_name.launch
 ```
 
 ## Jetson Environment
+
+> The Docker base images are chosen for [NVIDIA JetPack 4.6.1](https://developer.nvidia.com/embedded/jetpack-sdk-461), the OS for NVIDIA's Jetson series based on Ubuntu 18.04. Visit [this page](https://catalog.ngc.nvidia.com/orgs/nvidia/containers/l4t-tensorflow) and [this page](https://github.com/dusty-nv/jetson-containers) for base images meant for other JetPack versions.
 
 > **Creating a ROS Package**: follow the instructions in [this section](#create-a-ros-package).
 
@@ -35,7 +35,7 @@ cd jetson
 docker-compose -f docker/docker-compose.yml up --build
 
 # In a new terminal
-docker exec -it docker-ros-1 bash
+docker exec -it px4-ros-jetson-ros-1 bash
 cd catkin_ws
 source devel/setup.bash
 roslaunch package_name launch_file_name.launch
@@ -57,7 +57,7 @@ mkdir -p dev/ros/catkin_ws/src # or mkdir -p jetson/ros/catkin_ws/src if you are
 
 # In a new terminal
 # Attach a shell to the ROS container
-docker exec -it docker-ros-1 bash
+docker exec -it px4-ros-dev-ros-1 bash # or docker exec -it px4-ros-jetson-ros-1 bash if you are using the Jetson environment
 source /opt/ros/melodic/setup.bash
 
 # Create a new ROS workspace
@@ -85,7 +85,19 @@ To be able to edit the files outside the container, you need to change the owner
 sudo chown -R $USER:$USER dev/ros/catkin_ws # or sudo chown -R $USER:$USER jetson/ros/catkin_ws if you are using the Jetson environment
 ```
 
+## Troubleshooting
+
+### UAS: GeographicLib exception
+
+If you encounter `UAS: GeographicLib exception` while running the ROS package, it may be because the `geographiclib` package is not correctly installed during the Docker build process. You can manually run `curl -fsSL https://raw.githubusercontent.com/mavlink/mavros/master/mavros/scripts/install_geographiclib_datasets.sh | bash` in the ROS container to install the package.
+
 ## References
 
 - [ROS1 Tutorials](https://wiki.ros.org/ROS/Tutorials)
 - [PX4 Docs on MAVROS](https://docs.px4.io/main/en/ros/mavros_offboard_python.html)
+- [PX4 Docs on SITL Simulation Environment](https://docs.px4.io/main/en/simulation/#sitl-simulation-environment)
+- [PX4 Docs on Docker Containers](https://docs.px4.io/main/en/test_and_ci/docker.html)
+- [Docker VNC Server](https://qxf2.com/blog/view-docker-container-display-using-vnc-viewer/)
+- [JetPack Archive](https://developer.nvidia.com/embedded/jetpack-archive)
+- [L4T Containers](https://github.com/dusty-nv/jetson-containers)
+- [Enabling GPUs in the Container Runtime Ecosystem](https://developer.nvidia.com/blog/gpu-containers-runtime/)

@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<launch>
+	<!-- Include the MAVROS node with SITL and Gazebo -->
+	<!-- <include file="$(find px4)/launch/mavros_posix_sitl.launch">
+	</include> -->
+
+	<include file="$(find mavros)/launch/px4.launch">
+        <!-- <arg name="fcu_url" default="/dev/ttyUSB0:921600" /> -->
+        <arg name="fcu_url" default="udp://ros:14540@px4:14580" />
+	</include>
+
+	<!-- Our node to control the drone -->
+	<node pkg="pkg" type="node.py" name="my_node" required="true" output="screen" />
+</launch>
