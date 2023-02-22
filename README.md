@@ -8,17 +8,18 @@ This repository provides a Docker based development environment for PX4 and ROS.
 
 ```bash
 cd dev
-docker-compose -f docker/docker-compose.yml up --build
+docker compose -f docker/docker-compose.yml up --build
 
 # In a new terminal
-docker exec -it docker-px4-1 bash
+docker exec -it px4-ros-dev-px4-1 bash
+export DISPLAY=:0
 make px4_sitl gazebo # or make px4_sitl_default gazebo
 
 # Note that if you want to run the Gazebo GUI, you need to run a X server on the host machine, and set the environment variable `DISPLAY` to the IP address of your host machine within the container. We recommend using MobaXterm on Windows, which has a built-in X server. You can find the IP address by hovering over the X server icon on the top right corner of the MobaXterm GUI. Then run the following command in the container before running `make px4_sitl gazebo`:
 export DISPLAY=YOUR_IP:0.0
 
 # In a new terminal
-docker exec -it docker-ros-1 bash
+docker exec -it px4-ros-dev-ros-1 bash
 cd catkin_ws
 source devel/setup.bash
 roslaunch package_name launch_file_name.launch
@@ -35,7 +36,7 @@ cd jetson
 docker-compose -f docker/docker-compose.yml up --build
 
 # In a new terminal
-docker exec -it docker-ros-1 bash
+docker exec -it px4-ros-jetson-ros-1 bash
 cd catkin_ws
 source devel/setup.bash
 roslaunch package_name launch_file_name.launch
@@ -57,7 +58,7 @@ mkdir -p dev/ros/catkin_ws/src # or mkdir -p jetson/ros/catkin_ws/src if you are
 
 # In a new terminal
 # Attach a shell to the ROS container
-docker exec -it docker-ros-1 bash
+docker exec -it px4-ros-dev-ros-1 bash # or docker exec -it px4-ros-jetson-ros-1 bash if you are using the Jetson environment
 source /opt/ros/melodic/setup.bash
 
 # Create a new ROS workspace
@@ -87,9 +88,26 @@ sudo chown -R $USER:$USER dev/ros/catkin_ws # or sudo chown -R $USER:$USER jetso
 
 ## Troubleshooting
 
+### UAS: GeographicLib exception
+
 If you encounter `UAS: GeographicLib exception` while running the ROS package, it may be because the `geographiclib` package is not correctly installed during the Docker build process. You can manually run `curl -fsSL https://raw.githubusercontent.com/mavlink/mavros/master/mavros/scripts/install_geographiclib_datasets.sh | bash` in the ROS container to install the package.
+
+### libGL error: failed to load driver: swrast
+
+If you see `libGL error: failed to load driver: swrast` while trying to start Gazebo, you are likely using an Nvidia GPU. You need to install the Nvidia driver in the container first. It is recommended to use an Intel integrated GPU which works by default.
+
+```bash
+`apt-get update && apt-get install -y nvidia-driver-440`
+```
+
+
+**The steps below is suggested by the PX4 official docs, but it didn't work for me**
+1. Download the driver from <https://www.nvidia.com/download/index.aspx>
+2. `apt-get update && apt-get install -y kmod`
+3. `./NVIDIA-DRIVER.run -a -N --ui=none --no-kernel-module` (replace `NVIDIA-DRIVER.run` with the name of the file you downloaded, you may need to set the executable bit first with `chmod +x NVIDIA-DRIVER.run`)
 
 ## References
 
 - [ROS1 Tutorials](https://wiki.ros.org/ROS/Tutorials)
 - [PX4 Docs on MAVROS](https://docs.px4.io/main/en/ros/mavros_offboard_python.html)
+- [PX4 Docs on Docker Containers](https://docs.px4.io/main/en/test_and_ci/docker.html)

@@ -4,8 +4,10 @@ import pathlib
 import numpy as np
 
 try:
+    # To use the tflite_runtime package
     import tflite_runtime.interpreter as tflite
 except:
+    # To use the standard tensorflow package
     from tensorflow import lite as tflite
 
 os.environ["GLOG_minloglevel"] ="3"
@@ -40,8 +42,8 @@ class Predictor:
         self.output_details = self.interpreter.get_output_details()
 
     def predict(self, input_data):
-        # input_data = [[1, 2, 3]]
         input_data = np.array([input_data], dtype=np.float32)
+        # input_data = [[1, 2, 3]]
         self.interpreter.set_tensor(self.input_details[0]['index'], input_data)
         self.interpreter.invoke()
         output_data = self.interpreter.get_tensor(self.output_details[0]['index'])

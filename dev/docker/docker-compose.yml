@@ -1,4 +1,5 @@
 version: "3.9"
+name: px4-ros-dev
 services:
     ros:
         build:
@@ -13,9 +14,10 @@ services:
         command: sleep infinity
     px4:
         build:
-            context: ../
-            dockerfile: ./docker/px4/Dockerfile
+            context: ./docker/px4
+            dockerfile: ./Dockerfile
         ports:
+            - 127.0.0.1:5900:5900/tcp
             - 127.0.0.1:14540:14540/udp
             - 127.0.0.1:14541:14541/udp
             - 127.0.0.1:14542:14542/udp

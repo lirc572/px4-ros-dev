@@ -7,7 +7,7 @@ from model import Predictor
 INPUT_COLUMNS = [
     'x', 'y', 'z',
 ]
-WINDOW_SIZE = 20
+WINDOW_SIZE = 5
 
 MODEL_SAVE_DIRECTORY = os.environ['MODEL_SAVE_DIRECTORY']
 MODEL_FILENAME = os.environ['MODEL_FILENAME']
