@@ -1,6 +1,6 @@
 # px4-docker-dev
 
-This repository provides a Docker based development environment for PX4 and ROS. It also provides a Nvidia Jetson based environment for testing on an actual companion computer.
+This repository provides a Docker based development environment for PX4 and ROS. It also provides a NVIDIA Jetson based environment for testing on an actual companion computer.
 
 ## Development Environment
 
@@ -24,6 +24,8 @@ roslaunch package_name launch_file_name.launch
 ```
 
 ## Jetson Environment
+
+> The Docker base images are chosen for [NVIDIA JetPack 4.6.1](https://developer.nvidia.com/embedded/jetpack-sdk-461), the OS for NVIDIA's Jetson series based on Ubuntu 18.04. Visit [this page](https://catalog.ngc.nvidia.com/orgs/nvidia/containers/l4t-tensorflow) and [this page](https://github.com/dusty-nv/jetson-containers) for base images meant for other JetPack versions.
 
 > **Creating a ROS Package**: follow the instructions in [this section](#create-a-ros-package).
 
