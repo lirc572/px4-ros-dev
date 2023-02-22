@@ -1,0 +1,31 @@
+version: "3.9"
+services:
+    inference-server:
+        build:
+            context: ../
+            dockerfile: ./docker/inference-server/Dockerfile
+        runtime: nvidia
+        environment:
+            - NVIDIA_VISIBLE_DEVICES=all
+            - MODEL_BUCKET_URL=https://example.com/models
+            - MODEL_SAVE_DIRECTORY=/models
+            - MODEL_FILENAME=model.tflite
+        ports:
+            - 10080:80
+        volumes:
+            - lstm-models-volume:/models
+        # command: sleep infinity
+    ros:
+        build:
+            context: ../
+            dockerfile: ./docker/ros/Dockerfile
+        environment:
+            - SERVER_ADDR=http://inference-server
+        devices:
+            - "/dev/ttyUSB0:/dev/ttyUSB0"
+        volumes:
+            - ../ros/catkin_ws:/root/catkin_ws
+        command: sleep infinity
+
+volumes:
+    lstm-models-volume:
