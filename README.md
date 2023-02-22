@@ -85,6 +85,10 @@ To be able to edit the files outside the container, you need to change the owner
 sudo chown -R $USER:$USER dev/ros/catkin_ws # or sudo chown -R $USER:$USER jetson/ros/catkin_ws if you are using the Jetson environment
 ```
 
+## Troubleshooting
+
+If you encounter `UAS: GeographicLib exception` while running the ROS package, it may be because the `geographiclib` package is not correctly installed during the Docker build process. You can manually run `curl -fsSL https://raw.githubusercontent.com/mavlink/mavros/master/mavros/scripts/install_geographiclib_datasets.sh | bash` in the ROS container to install the package.
+
 ## References
 
 - [ROS1 Tutorials](https://wiki.ros.org/ROS/Tutorials)
