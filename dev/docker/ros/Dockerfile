@@ -10,6 +10,4 @@ RUN apt-get update && apt-get install -y \
 
 RUN curl -fsSL https://raw.githubusercontent.com/mavlink/mavros/master/mavros/scripts/install_geographiclib_datasets.sh | bash
 
-COPY ros/catkin_ws .
-
 CMD ["sleep", "infinity"]
