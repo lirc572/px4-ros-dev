@@ -21,5 +21,3 @@ WORKDIR /root/PX4-Autopilot
 COPY ./docker-entrypoint.sh /
 
 ENTRYPOINT ["/docker-entrypoint.sh"]
-
-CMD ["make px4_sitl gazebo"]
