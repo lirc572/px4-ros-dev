@@ -18,6 +18,7 @@ DISPLAY=:0 make px4_sitl gazebo # or make px4_sitl_default gazebo
 # In a new terminal
 docker exec -it px4-ros-dev-ros-1 bash
 cd catkin_ws
+catkin_make
 source devel/setup.bash
 roslaunch package_name launch_file_name.launch
 ```
@@ -37,6 +38,7 @@ docker-compose -f docker/docker-compose.yml up --build
 # In a new terminal
 docker exec -it px4-ros-jetson-ros-1 bash
 cd catkin_ws
+catkin_make
 source devel/setup.bash
 roslaunch package_name launch_file_name.launch
 ```
